@@ -1,0 +1,30 @@
+require: rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.5.1
+  Exclude:
+    - 'db/**/*.rb'
+    - 'bin/*'
+    - 'vendor/**/*'
+    - 'spec/spec_helper.rb'
+
+Metrics/LineLength:
+  Max: 130
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*.rb'
+
+Style/Documentation:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - 'spec/acceptance/*.rb'
