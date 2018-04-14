@@ -69,3 +69,65 @@ jobs:
       - store_artifacts:
           path: /tmp/bundle-audit-results
           destination: bundle-audit-results
+
+    staging:
+        docker:
+          - image: circleci/ruby:2.5.1-node-browsers
+        working_directory: ~/spotibox
+        steps:
+          - checkout
+          - run:
+              name: Setup Heroku
+              command: |
+                bash .circleci/setup-heroku.sh
+          - add_ssh_keys:
+              fingerprints:
+                - "c3:85:20:74:fd:e9:f6:70:e8:92:00:30:a8:48:cd:28"
+          - deploy:
+              name: Deploy to staging
+              command: |
+                git push staging master
+                heroku run rails db:migrate -r staging
+      production:
+        docker:
+          - image: circleci/ruby:2.5.1-node-browsers
+        working_directory: ~/spotibox
+        steps:
+          - checkout
+          - run:
+              name: Setup Heroku
+              command: |
+                bash .circleci/setup-heroku.sh
+          - add_ssh_keys:
+              fingerprints:
+                - "c3:85:20:74:fd:e9:f6:70:e8:92:00:30:a8:48:cd:28"
+          - deploy:
+              name: Deploy to production
+              command: |
+                git push production master
+                heroku run rails db:migrate -r production
+    # WorkFlows
+    workflows:
+      version: 2
+      pipeline:
+        jobs:
+          - test
+          - staging:
+              requires:
+                - test
+              filters:
+                branches:
+                  only: master
+          - approve_production_deploy:
+              type: approval
+              requires:
+                - staging
+              filters:
+                branches:
+                  only: master
+          - production:
+              requires:
+                - approve_production_deploy
+              filters:
+                branches:
+                  only: master
