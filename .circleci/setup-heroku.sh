@@ -1,6 +1,6 @@
 #!/bin/bash
-git remote add staging https://git.heroku.com/staging-greenweez-stock.git
-git remote add production https://git.heroku.com/greenweez-stock.git
+git remote add staging https://git.heroku.com/staging-spotiboxe.git
+git remote add production https://git.heroku.com/spotiboxe.git
 wget https://cli-assets.heroku.com/branches/stable/heroku-linux-amd64.tar.gz
 sudo mkdir -p /usr/local/lib /usr/local/bin
 sudo tar -xvzf heroku-linux-amd64.tar.gz -C /usr/local/lib
