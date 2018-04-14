@@ -1,14 +1,8 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
 version: 2
 jobs:
-  build:
+  test:
     docker:
-      # specify the version you desire here
        - image: circleci/ruby:2.5.1-node-browsers
-
          environment:
           - RAILS_ENV: test
           - DATABASE_URL: postgres://postgres:postgres@localhost:5432
@@ -19,6 +13,7 @@ jobs:
            - POSTGRES_DB: spotibox_test
 
     working_directory: ~/spotibox
+
     steps:
       - checkout
 
@@ -31,37 +26,41 @@ jobs:
           name: install dependencies
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
+
       - save_cache:
           paths:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
 
       # Database setup
-      - run: bundle exec rake db:create db:migrate
-      - run: bundle exec rake db:schema:load
+      - run: bundle exec rake db:create db:schema:load
 
       # run tests!
       - run:
           name: Run Tests
           command: |
             bundle exec rspec
+
       # run the linters
       - run:
           name: Rubocop
           command: |
-            bundle exec rubocop app spec --require rubocop-rspec
+            bundle exec rubocop --require rubocop-rspec
+
       # run static code analysis
       - run:
           name: Brakeman
           command: |
             mkdir /tmp/brakeman-results
             (bundle exec brakeman || true) > /tmp/brakeman-results/brakeman-report.txt
+
       # check for outdated gems
       - run:
           name: Bundle Audit
           command: |
             mkdir /tmp/bundle-audit-results
             (bundle exec bundle-audit || true) > /tmp/bundle-audit-results/bundle-report.txt
+
       # store artifacts
       - store_artifacts:
           path: /tmp/brakeman-results
@@ -70,42 +69,44 @@ jobs:
           path: /tmp/bundle-audit-results
           destination: bundle-audit-results
 
-    staging:
-        docker:
-          - image: circleci/ruby:2.5.1-node-browsers
-        working_directory: ~/spotibox
-        steps:
-          - checkout
-          - run:
-              name: Setup Heroku
-              command: |
-                bash .circleci/setup-heroku.sh
-          - add_ssh_keys:
-              fingerprints:
-                - "c3:85:20:74:fd:e9:f6:70:e8:92:00:30:a8:48:cd:28"
-          - deploy:
-              name: Deploy to staging
-              command: |
-                git push staging master
-                heroku run rails db:migrate -r staging
-      production:
-        docker:
-          - image: circleci/ruby:2.5.1-node-browsers
-        working_directory: ~/spotibox
-        steps:
-          - checkout
-          - run:
-              name: Setup Heroku
-              command: |
-                bash .circleci/setup-heroku.sh
-          - add_ssh_keys:
-              fingerprints:
-                - "c3:85:20:74:fd:e9:f6:70:e8:92:00:30:a8:48:cd:28"
-          - deploy:
-              name: Deploy to production
-              command: |
-                git push production master
-                heroku run rails db:migrate -r production
+  staging:
+    docker:
+      - image: circleci/ruby:2.5.1-node-browsers
+    working_directory: ~/spotibox
+    steps:
+      - checkout
+      - run:
+          name: Setup Heroku
+          command: |
+            bash .circleci/setup-heroku.sh
+      - add_ssh_keys:
+          fingerprints:
+            - "c3:85:20:74:fd:e9:f6:70:e8:92:00:30:a8:48:cd:28"
+      - deploy:
+          name: Deploy to staging
+          command: |
+            git push staging master
+            heroku run rails db:migrate -r staging
+
+  production:
+    docker:
+      - image: circleci/ruby:2.5.1-node-browsers
+    working_directory: ~/spotibox
+    steps:
+      - checkout
+      - run:
+          name: Setup Heroku
+          command: |
+            bash .circleci/setup-heroku.sh
+      - add_ssh_keys:
+          fingerprints:
+            - "c3:85:20:74:fd:e9:f6:70:e8:92:00:30:a8:48:cd:28"
+      - deploy:
+          name: Deploy to production
+          command: |
+            git push production master
+            heroku run rails db:migrate -r production
+
 # WorkFlows
 workflows:
   version: 2

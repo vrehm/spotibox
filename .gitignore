@@ -27,3 +27,6 @@
 
 # Ignore Heroku rsa key
 /heroku
+
+# Ignore test config
+.circleci/config1.yml
