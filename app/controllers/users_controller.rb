@@ -36,4 +36,3 @@ class UsersController < ApplicationController
     player.play_track(nil, @chosen_one.uri)
   end
 end
-
