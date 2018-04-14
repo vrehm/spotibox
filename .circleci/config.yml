@@ -106,28 +106,28 @@ jobs:
               command: |
                 git push production master
                 heroku run rails db:migrate -r production
-    # WorkFlows
-    workflows:
-      version: 2
-      pipeline:
-        jobs:
-          - test
-          - staging:
-              requires:
-                - test
-              filters:
-                branches:
-                  only: master
-          - approve_production_deploy:
-              type: approval
-              requires:
-                - staging
-              filters:
-                branches:
-                  only: master
-          - production:
-              requires:
-                - approve_production_deploy
-              filters:
-                branches:
-                  only: master
+# WorkFlows
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - test
+      - staging:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - approve_production_deploy:
+          type: approval
+          requires:
+            - staging
+          filters:
+            branches:
+              only: master
+      - production:
+          requires:
+            - approve_production_deploy
+          filters:
+            branches:
+              only: master
