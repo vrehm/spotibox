@@ -1,11 +1,10 @@
-<!-- <p><%= @dead_kennedys.popularity %></p>
-<p><%= @dead_kennedys.genres %></p>
-<p><%= @dead_kennedys.top_tracks(:FR) %></p>
-<p><%= @mtsc.release_date %></p>
-<p><%= @mtsc.images %></p>
-<p><%= @mtsc.available_markets %></p>
-<p><%= @c_u_a.duration_ms %></p>
-<p><%= @c_u_a.track_number %></p>
-<p><%= @c_u_a.preview_url %></p> -->
-
-<%= link_to 'Sign in with Spotify', '/auth/spotify' %>
+<div class="container">
+    <div class="login-container hidden" id="js-login-container">
+      <button class="btn btn--login" id="js-btn-login">
+        <%= link_to 'Login with Spotify', '/auth/spotify' %>
+      </button>
+    </div>
+    <div class="main-container hidden" id="js-main-container"></div>
+</div>
+<!-- <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch"></script> -->
+<script src="https://spotify-player.herokuapp.com/spotify-player.js"></script>
