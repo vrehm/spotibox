@@ -30,6 +30,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 gem 'rspotify'
+gem 'omniauth-oauth2', '~> 1.3.1'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -42,6 +43,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.7'
   gem 'rubocop', require: false
   gem 'rubocop-rspec'
+  gem 'pry-byebug'
 end
 
 group :development do
